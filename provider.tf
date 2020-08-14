@@ -4,7 +4,7 @@ provider "aws" {
 
 terraform {
   backend "s3" {
-   bucket =  "teqforce-tfstate"
+    bucket = "teqforce-tfstate"
     key    = "teqforce/terraform.tfstate"
     region = "us-east-1"
   }
