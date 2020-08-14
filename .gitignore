@@ -3,3 +3,4 @@ terraform.tfvars
 plan
 mykey
 mykey.pub
+packer-example.json
