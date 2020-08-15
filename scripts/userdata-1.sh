@@ -60,3 +60,9 @@ systemctl restart jenkins
 # Calling the function
 updating_jenkins_master_password
 
+cd /var/lib/jenkins/users/
+sed "/<idToDirectoryNameMap*/a <entry><string>$USERNAME<\/string><string>$USERNAME_$DIRNUM<\/string><\/entry>" users.xml > users-1.xml
+
+sudo mv users-1.xml users.xml
+sudo chown -R /var/lib/jenkins/users/
+
