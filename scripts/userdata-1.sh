@@ -51,18 +51,16 @@ cd /var/lib/jenkins/users/
 
 OLDDIR=$(ls -d admin*)
 DIRNUM=$(ls -d admin* | awk -F'_' '{print $2}')
+NEWDIR=${USERNAME}_${DIRNUM}
+mv $OLDDIR $NEWDIR
 
-mv $OLDDIR $USERNAME_$DIRNUM
+cd /var/lib/jenkins/users/
+sed "/<idToDirectoryNameMap*/a <entry><string>$USERNAME<\/string><string>$NEWDIR<\/string><\/entry>" users.xml > users-1.xml
+
+sudo mv users-1.xml users.xml
 
 sudo chown -R jenkins:jenkins /var/lib/jenkins/users/
 systemctl restart jenkins
 
 # Calling the function
 updating_jenkins_master_password
-
-cd /var/lib/jenkins/users/
-sed "/<idToDirectoryNameMap*/a <entry><string>$USERNAME<\/string><string>$USERNAME_$DIRNUM<\/string><\/entry>" users.xml > users-1.xml
-
-sudo mv users-1.xml users.xml
-sudo chown -R jenkins:jenkins /var/lib/jenkins/users/
-
