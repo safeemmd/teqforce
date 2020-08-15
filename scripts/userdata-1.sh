@@ -59,6 +59,10 @@ cd /var/lib/jenkins/users/
 
 sed -i "s#admin#${USERNAME}#g" users.xml
 
+cd /var/lib/jenkins/users/$USERNAME*
+
+sed -i "s#admin#${USERNAME}#g" config.xml
+
 sudo chown -R jenkins:jenkins /var/lib/jenkins/users/
 systemctl restart jenkins
 
