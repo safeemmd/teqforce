@@ -1,18 +1,5 @@
 #!/bin/bash
 
-USERNAME=Teqforce
-jenkins_admin_password=Teqforce!1
-
-cd /var/lib/jenkins/users/
-
-OLDDIR=$(ls -d admin*)
-DIRNUM=$(ls -d admin* | awk -F'_' '{print $2}')
-
-mv $OLDDIR $USERNAME_$DIRNUM
-
-sudo chown -R /var/lib/jenkins/users/
-systemctl restart jenkins
-
 function updating_jenkins_master_password ()
 {
   cat > /tmp/jenkinsHash.py <<EOF
@@ -57,5 +44,19 @@ EOF
   sleep 10
 }
 
+USERNAME=Teqforce
+jenkins_admin_password=Teqforce!1
+
+cd /var/lib/jenkins/users/
+
+OLDDIR=$(ls -d admin*)
+DIRNUM=$(ls -d admin* | awk -F'_' '{print $2}')
+
+mv $OLDDIR $USERNAME_$DIRNUM
+
+sudo chown -R /var/lib/jenkins/users/
+systemctl restart jenkins
+
+# Calling the function
 updating_jenkins_master_password
 
