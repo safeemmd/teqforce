@@ -44,7 +44,7 @@ EOF
   sleep 10
 }
 
-USERNAME=Teqforce
+USERNAME=teqforce
 jenkins_admin_password=Teqforce!1
 
 cd /var/lib/jenkins/users/
@@ -55,9 +55,9 @@ NEWDIR=${USERNAME}_${DIRNUM}
 mv $OLDDIR $NEWDIR
 
 cd /var/lib/jenkins/users/
-sed "/<idToDirectoryNameMap*/a <entry><string>$USERNAME<\/string><string>$NEWDIR<\/string><\/entry>" users.xml > users-1.xml
+# sed "/<idToDirectoryNameMap*/a <entry><string>$USERNAME<\/string><string>$NEWDIR<\/string><\/entry>" users.xml > users-1.xml
 
-sudo mv users-1.xml users.xml
+sed -i "s#admin#${USERNAME}#g" users.xml
 
 sudo chown -R jenkins:jenkins /var/lib/jenkins/users/
 systemctl restart jenkins
