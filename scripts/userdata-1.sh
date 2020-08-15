@@ -54,7 +54,7 @@ DIRNUM=$(ls -d admin* | awk -F'_' '{print $2}')
 
 mv $OLDDIR $USERNAME_$DIRNUM
 
-sudo chown -R /var/lib/jenkins/users/
+sudo chown -R jenkins:jenkins /var/lib/jenkins/users/
 systemctl restart jenkins
 
 # Calling the function
@@ -64,5 +64,5 @@ cd /var/lib/jenkins/users/
 sed "/<idToDirectoryNameMap*/a <entry><string>$USERNAME<\/string><string>$USERNAME_$DIRNUM<\/string><\/entry>" users.xml > users-1.xml
 
 sudo mv users-1.xml users.xml
-sudo chown -R /var/lib/jenkins/users/
+sudo chown -R jenkins:jenkins /var/lib/jenkins/users/
 
