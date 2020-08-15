@@ -1,37 +1,70 @@
 #!/bin/bash
 
-USERNAME=Teqforce123
+function updating_jenkins_master_password ()
+{
+  cat > /tmp/jenkinsHash.py <<EOF
+import bcrypt
+import sys
+if not sys.argv[1]:
+  sys.exit(10)
+plaintext_pwd=sys.argv[1]
+encrypted_pwd=bcrypt.hashpw(sys.argv[1], bcrypt.gensalt(rounds=10, prefix=b"2a"))
+isCorrect=bcrypt.checkpw(plaintext_pwd, encrypted_pwd)
+if not isCorrect:
+  sys.exit(20);
+print "{}".format(encrypted_pwd)
+EOF
 
-mkdir -p /var/lib/jenkins/users/$USERNAME/ 
+  chmod +x /tmp/jenkinsHash.py
 
-echo y | cp -r /var/lib/jenkins/users/admin_*/config.xml /var/lib/jenkins/users/$USERNAME/
+  # Wait till /var/lib/jenkins/users/admin* folder gets created
+  sleep 10
 
-cd /var/lib/jenkins/users/$USERNAME
+  cd /var/lib/jenkins/users/$USERNAME*
+  pwd
+  while (( 1 )); do
+      echo "Waiting for Jenkins to generate admin user's config file ..."
 
-sed -i "s#admin#$USERNAME#g" config.xml
+      if [[ -f "./config.xml" ]]; then
+          break
+      fi
 
-OTHER_STRING=$(cat config.xml | grep "<seed>" | awk -F '<seed>' '{print $2}' | sed  's#</seed>##')
+      sleep 10
+  done
 
-RANDOM_STRING=$(head /dev/urandom | tr -dc A-Za-z | head -c 13 ; echo '')
+  echo "Config file created"
 
-sed -i "s#$OTHER_STRING#$RANDOM_STRING#" config.xml
+  admin_password=$(python /tmp/jenkinsHash.py ${jenkins_admin_password} 2>&1)
 
-yum install python2-pip -y
-pip2 install bcrypt
+  # Please do not remove alter quote as it keeps the hash syntax intact or else while substitution, $<character> will be replaced by null
+  xmlstarlet -q ed --inplace -u "/user/properties/hudson.security.HudsonPrivateSecurityRealm_-Details/passwordHash" -v '#jbcrypt:'"$admin_password" config.xml
 
-NEW_HASHED_PASSWORD=$(python2 -c 'import bcrypt; print(bcrypt.hashpw("Teqforce!1", bcrypt.gensalt(rounds=10)))')
+  # Restart
+  systemctl restart jenkins
+  sleep 10
+}
 
-OLD_HASHED_PASSWORD=$(cat config.xml | grep "<passwordHash>" | awk -F '<passwordHash>' '{print $2}' | sed 's#</passwordHash>##')
+USERNAME=teqforce
+jenkins_admin_password=Teqforce!1
 
-sed -i "s|$OLD_HASHED_PASSWORD|#jbcrypt:$NEW_HASHED_PASSWORD|" config.xml
-
-
-# Add new entry in users file
 cd /var/lib/jenkins/users/
 
-sed "/<idToDirectoryNameMap*/a <entry><string>$USERNAME<\/string><string>$USERNAME<\/string><\/entry>" users.xml > users-1.xml
+OLDDIR=$(ls -d admin*)
+DIRNUM=$(ls -d admin* | awk -F'_' '{print $2}')
+NEWDIR=${USERNAME}_${DIRNUM}
+mv $OLDDIR $NEWDIR
 
-mv users-1.xml users.xml
+cd /var/lib/jenkins/users/
+# sed "/<idToDirectoryNameMap*/a <entry><string>$USERNAME<\/string><string>$NEWDIR<\/string><\/entry>" users.xml > users-1.xml
 
+sed -i "s#admin#${USERNAME}#g" users.xml
+
+cd /var/lib/jenkins/users/$USERNAME*
+
+sed -i "s#admin#${USERNAME}#g" config.xml
+
+sudo chown -R jenkins:jenkins /var/lib/jenkins/users/
 systemctl restart jenkins
 
+# Calling the function
+updating_jenkins_master_password
