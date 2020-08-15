@@ -24,7 +24,7 @@ resource "aws_security_group" "jenkins_security" {
   }
 
   tags = {
-    Name = "example-instance"
+    Name = "jenkins_instance"
   }
 }
 
