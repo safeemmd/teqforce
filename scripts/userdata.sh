@@ -44,6 +44,7 @@ EOF
   sleep 10
 }
 
+systemctl restart jenkins
 USERNAME=teqforce
 jenkins_admin_password=Teqforce!1
 
@@ -66,5 +67,6 @@ sed -i "s#admin#${USERNAME}#g" config.xml
 sudo chown -R jenkins:jenkins /var/lib/jenkins/users/
 systemctl restart jenkins
 
+sleep 10
 # Calling the function
 updating_jenkins_master_password
