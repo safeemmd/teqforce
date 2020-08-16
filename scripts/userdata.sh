@@ -36,9 +36,10 @@ print "{}".format(encrypted_pwd)
 EOF
 
   chmod +x /tmp/jenkinsHash.py
+  systemctl restart jenkins
   
   # Wait till /var/lib/jenkins/users/admin* folder gets created
-  sleep 10
+  sleep 20
 
   cd /var/lib/jenkins/users/admin*
   pwd
