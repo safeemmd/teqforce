@@ -90,7 +90,7 @@ function configure_jenkins_server ()
 {
   wait_for_jenkins
 
-  sleep 150
+  sleep 10
 
   # Jenkins cli
   echo "installing the Jenkins cli ..."
