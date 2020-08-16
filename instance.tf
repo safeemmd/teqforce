@@ -11,7 +11,7 @@ resource "aws_instance" "jenkins_instance" {
   # the public SSH key
   key_name = aws_key_pair.mykeypair.key_name
 
-  user_data = "${file("scripts/userdata.sh")}"
+  user_data = "${file("scripts/userdata-new.sh")}"
 
   tags = {
     Name = "Jenkins"
