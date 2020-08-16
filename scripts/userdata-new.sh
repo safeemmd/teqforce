@@ -20,7 +20,7 @@ function wait_for_jenkins()
 
 function updating_jenkins_master_password ()
 {
-  jenkins_admin_password="admin"
+  jenkins_admin_password="admin123"
 
   cat > /tmp/jenkinsHash.py <<EOF
 import bcrypt
@@ -111,7 +111,7 @@ function configure_jenkins_server ()
 
   # Getting initial password
   # PASSWORD=$(cat /var/lib/jenkins/secrets/initialAdminPassword)
-  PASSWORD="admin"
+  PASSWORD="admin123"
   sleep 10
 
   jenkins_dir="/var/lib/jenkins"
@@ -139,6 +139,21 @@ function configure_jenkins_server ()
   java -jar $jenkins_dir/jenkins-cli.jar -s http://127.0.0.1:8080 -auth admin:$PASSWORD safe-restart
 }
 
+function create_user () 
+{
+  PASSWORD="admin123"
+
+  while ((1)); do
+     echo 'jenkins.model.Jenkins.instance.securityRealm.createAccount("Teqforce", "Teqforce!1")' | java -jar /var/lib/jenkins/jenkins-cli.jar -s "http://127.0.0.1:8080" -auth admin:$PASSWORD -noKeyAuth groovy = –
+
+     if [[ $? -eq 0 ]]; then
+         break
+     fi
+
+     sleep 10      
+  done
+}
+
 ### script starts here ###
 
 # install_packages
@@ -150,6 +165,8 @@ updating_jenkins_master_password
 wait_for_jenkins
 
 configure_jenkins_server
+
+create_user
 
 echo "Done"
 exit 0
