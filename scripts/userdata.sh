@@ -39,7 +39,7 @@ EOF
   systemctl restart jenkins
   
   # Wait till /var/lib/jenkins/users/admin* folder gets created
-  sleep 20
+  sleep 60
 
   cd /var/lib/jenkins/users/admin*
   pwd
