@@ -39,7 +39,7 @@ EOF
   systemctl restart jenkins
   
   # Wait till /var/lib/jenkins/users/admin* folder gets created
-  sleep 60
+  sleep 300
 
   cd /var/lib/jenkins/users/admin*
   pwd
@@ -89,7 +89,7 @@ function configure_jenkins_server ()
 {
   wait_for_jenkins
 
-  sleep 10
+  sleep 150
 
   # Jenkins cli
   echo "installing the Jenkins cli ..."
