@@ -139,6 +139,11 @@ function configure_jenkins_server ()
   java -jar $jenkins_dir/jenkins-cli.jar -s http://127.0.0.1:8080 -auth admin:$PASSWORD safe-restart
 }
 
+function create_user () 
+{
+  echo 'jenkins.model.Jenkins.instance.securityRealm.createAccount("Teqforce", "Teqforce!1")' | java -jar /var/lib/jenkins/jenkins-cli.jar -s "http://localhost:8080" -auth admin:admin -noKeyAuth groovy = –
+}
+
 ### script starts here ###
 
 # install_packages
@@ -150,6 +155,8 @@ updating_jenkins_master_password
 wait_for_jenkins
 
 configure_jenkins_server
+
+create_user
 
 echo "Done"
 exit 0
