@@ -41,18 +41,20 @@ EOF
   # Wait till /var/lib/jenkins/users/admin* folder gets created
 
   # cd /var/lib/jenkins/users/admin*
-  pwd
-  while (( 1 )); do
-      echo "Waiting for Jenkins to generate admin user's config file ..."
 
-      if [[ -f "/var/lib/jenkins/users/admin_*/config.xml" ]]; then
-          break
-      fi
-
-      sleep 10
+  while (( 1 )); do       
+    echo "Waiting for Jenkins to generate admin user's config file ..."        
+    
+    if [ -f /var/lib/jenkins/users/admin_*/config.xml ]; then           
+        break;       
+    fi;        
+    
+    sleep 10;   
   done
 
   echo "Admin config file created"
+  cd /var/lib/jenkins/users/admin*
+  pwd
 
   admin_password=$(python /tmp/jenkinsHash.py ${jenkins_admin_password} 2>&1)
   
