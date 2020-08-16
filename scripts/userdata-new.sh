@@ -142,7 +142,16 @@ function configure_jenkins_server ()
 function create_user () 
 {
   PASSWORD="admin123"
-  echo 'jenkins.model.Jenkins.instance.securityRealm.createAccount("Teqforce", "Teqforce!1")' | java -jar /var/lib/jenkins/jenkins-cli.jar -s "http://127.0.0.1:8080" -auth admin:$PASSWORD -noKeyAuth groovy = –
+
+  while ((1)); do
+     echo 'jenkins.model.Jenkins.instance.securityRealm.createAccount("Teqforce", "Teqforce!1")' | java -jar /var/lib/jenkins/jenkins-cli.jar -s "http://127.0.0.1:8080" -auth admin:$PASSWORD -noKeyAuth groovy = –
+
+     if [[ $? -eq 0 ]]; then
+         break
+     fi
+
+     sleep 10      
+  done
 }
 
 ### script starts here ###
