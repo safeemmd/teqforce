@@ -88,6 +88,8 @@ function configure_jenkins_server ()
 {
   wait_for_jenkins
 
+  sleep 10
+
   # Jenkins cli
   echo "installing the Jenkins cli ..."
   # cp /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar /var/lib/jenkins/jenkins-cli.jar
