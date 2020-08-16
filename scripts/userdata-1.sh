@@ -1,6 +1,31 @@
 #!/bin/bash
 
-jenkins_admin_password=admin
+systemctl restart jenkins
+USERNAME=teqforce
+jenkins_admin_password=Teqforce!1
+
+cd /var/lib/jenkins/users/
+
+OLDDIR=$(ls -d admin*)
+DIRNUM=$(ls -d admin* | awk -F'_' '{print $2}')
+NEWDIR=${USERNAME}_${DIRNUM}
+mv $OLDDIR $NEWDIR
+
+cd /var/lib/jenkins/users/
+# sed "/<idToDirectoryNameMap*/a <entry><string>$USERNAME<\/string><string>$NEWDIR<\/string><\/entry>" users.xml > users-1.xml
+
+sed -i "s#admin#${USERNAME}#g" users.xml
+
+cd /var/lib/jenkins/users/$USERNAME*
+
+sed -i "s#admin#${USERNAME}#g" config.xml
+
+sudo chown -R jenkins:jenkins /var/lib/jenkins/users/
+systemctl restart jenkins
+
+sleep 10
+# Calling the function
+updating_jenkins_master_password
 
 function updating_jenkins_master_password ()
 {
@@ -22,7 +47,7 @@ EOF
   # Wait till /var/lib/jenkins/users/admin* folder gets created
   sleep 10
 
-  cd /var/lib/jenkins/users/admin*
+  cd /var/lib/jenkins/users/$USERNAME*
   pwd
   while (( 1 )); do
       echo "Waiting for Jenkins to generate admin user's config file ..."
@@ -34,7 +59,7 @@ EOF
       sleep 10
   done
 
-  echo "Admin config file created"
+  echo "Config file created"
 
   admin_password=$(python /tmp/jenkinsHash.py ${jenkins_admin_password} 2>&1)
 
@@ -45,6 +70,3 @@ EOF
   systemctl restart jenkins
   sleep 10
 }
-
-updating_jenkins_master_password
-

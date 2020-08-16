@@ -1,5 +1,5 @@
 resource "aws_security_group" "jenkins_security" {
-  vpc_id      = var.vpc_id
+  vpc_id      = data.aws_vpc.default_vpc.id
   name        = "allow-ssh"
   description = "security group that allows ssh and all egress traffic"
   egress {
@@ -24,7 +24,7 @@ resource "aws_security_group" "jenkins_security" {
   }
 
   tags = {
-    Name = "example-instance"
+    Name = "jenkins_instance"
   }
 }
 

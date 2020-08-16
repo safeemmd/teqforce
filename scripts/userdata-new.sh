@@ -39,21 +39,22 @@ EOF
   systemctl restart jenkins
   
   # Wait till /var/lib/jenkins/users/admin* folder gets created
-  sleep 300
 
-  cd /var/lib/jenkins/users/admin*
-  pwd
-  while (( 1 )); do
-      echo "Waiting for Jenkins to generate admin user's config file ..."
+  # cd /var/lib/jenkins/users/admin*
 
-      if [[ -f "./config.xml" ]]; then
-          break
-      fi
-
-      sleep 10
+  while (( 1 )); do       
+    echo "Waiting for Jenkins to generate admin user's config file ..."        
+    
+    if [ -f /var/lib/jenkins/users/admin_*/config.xml ]; then           
+        break;       
+    fi;        
+    
+    sleep 10;   
   done
 
   echo "Admin config file created"
+  cd /var/lib/jenkins/users/admin*
+  pwd
 
   admin_password=$(python /tmp/jenkinsHash.py ${jenkins_admin_password} 2>&1)
   
@@ -89,12 +90,24 @@ function configure_jenkins_server ()
 {
   wait_for_jenkins
 
-  sleep 150
+  sleep 10
 
   # Jenkins cli
   echo "installing the Jenkins cli ..."
   # cp /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar /var/lib/jenkins/jenkins-cli.jar
-  wget -O /var/lib/jenkins/jenkins-cli.jar http://127.0.0.1:8080/jnlpJars/jenkins-cli.jar
+
+  while ((1)); do
+     wget -O /var/lib/jenkins/jenkins-cli.jar http://127.0.0.1:8080/jnlpJars/jenkins-cli.jar
+
+     if [[ $? -eq 0 ]]; then
+         break
+     fi
+
+     sleep 10
+      
+  done
+
+  
 
   # Getting initial password
   # PASSWORD=$(cat /var/lib/jenkins/secrets/initialAdminPassword)
