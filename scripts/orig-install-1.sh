@@ -20,6 +20,8 @@ function wait_for_jenkins()
 
 function updating_jenkins_master_password ()
 {
+  jenkins_admin_password="admin"
+
   cat > /tmp/jenkinsHash.py <<EOF
 import bcrypt
 import sys
@@ -86,11 +88,12 @@ function configure_jenkins_server ()
 {
   # Jenkins cli
   echo "installing the Jenkins cli ..."
-  cp /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar /var/lib/jenkins/jenkins-cli.jar
+  # cp /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar /var/lib/jenkins/jenkins-cli.jar
+  wget -O /var/lib/jenkins/jenkins-cli.jar http://127.0.0.1:8080/jnlpJars/jenkins-cli.jar
 
   # Getting initial password
   # PASSWORD=$(cat /var/lib/jenkins/secrets/initialAdminPassword)
-  PASSWORD="Teqforce!1"
+  PASSWORD="admin"
   sleep 10
 
   jenkins_dir="/var/lib/jenkins"
@@ -120,7 +123,7 @@ function configure_jenkins_server ()
 
 ### script starts here ###
 
-install_packages
+# install_packages
 
 wait_for_jenkins
 

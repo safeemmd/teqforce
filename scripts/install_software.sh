@@ -10,3 +10,5 @@ sudo yum -y install xmlstarlet
 
 sudo yum install -y python2-pip
 sudo pip2 install bcrypt
+
+sudo yum install -y nc
